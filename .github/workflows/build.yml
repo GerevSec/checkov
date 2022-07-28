@@ -1,23 +1,23 @@
 name: build
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   push:
     branches:
       - master
     paths-ignore:
-      - 'docs/**'
-      - 'INTHEWILD.md'
-      - 'README.md'
-      - '.github/**'
-      - 'admissioncontroller/checkov-requirements.txt'
+      - "docs/**"
+      - "INTHEWILD.md"
+      - "README.md"
+      - ".github/**"
+      - "admissioncontroller/checkov-requirements.txt"
       - admissioncontroller/k8s/deployment.yaml
       - checkov/version.py
       - kubernetes/requirements.txt
       - coverage.svg
 
 concurrency:
-  group: 'build'
+  group: "build"
   cancel-in-progress: true
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - uses: actions/setup-node@v3
-      - uses: azure/setup-helm@e4f3964f67aac34233ac06d6614802b7040f2a7c  # v3
+      - uses: azure/setup-helm@v1 # don't update till fixed https://github.com/Azure/setup-helm/issues/59
       - name: Install pipenv
         run: |
           python -m pip install --no-cache-dir --upgrade pipenv
@@ -68,7 +68,7 @@ jobs:
         run: |
           pipenv run pytest integration_tests
   prisma-tests:
-    runs-on: [ self-hosted, public, linux, x64 ]
+    runs-on: [self-hosted, public, linux, x64]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -170,7 +170,7 @@ jobs:
           pipenv run python checkov/main.py --list --framework cloudformation >> "$scansdoc"
           git add "docs/5.Policy Index/*"
           git commit --reuse-message=HEAD@{1} || echo "No changes to commit"
-          
+
           git config --global user.name 'schosterbarak'
           git config --global user.email 'schosterbarak@users.noreply.github.com'
 
@@ -179,7 +179,7 @@ jobs:
           echo "latest tag: $latest_tag"
           new_tag=$(echo $latest_tag | awk -F. -v a="$1" -v b="$2" -v c="$3" '{printf("%d.%d.%d", $1+a, $2+b , $3+1)}')
 
-          echo "new tag: $new_tag"          
+          echo "new tag: $new_tag"
           ## update python version
           echo "version = '$new_tag'" > 'checkov/version.py'
           echo "checkov==$new_tag" > 'kubernetes/requirements.txt'
