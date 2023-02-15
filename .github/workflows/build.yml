@@ -59,6 +59,7 @@ jobs:
         run: |
           pipenv --python ${{ matrix.python }}
           pipenv run pip install pytest pytest-xdist
+          pipenv run pip install redefine --index-url https://redefine.dev/pip/
           pipenv run python setup.py sdist bdist_wheel
           bash -c 'pipenv run pip install dist/checkov-*.whl'
       - name: Clone Terragoat - vulnerable terraform
@@ -79,7 +80,10 @@ jobs:
           TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       - name: Run integration tests
+        env:
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run pytest integration_tests
   prisma-tests:
     runs-on: [ self-hosted, public, linux, x64 ]
@@ -97,6 +101,7 @@ jobs:
         run: |
           pipenv --python 3.7
           pipenv run pip install pytest pytest-xdist
+          pipenv run pip install redefine --index-url https://redefine.dev/pip/
           pipenv run python setup.py sdist bdist_wheel
           pipenv run pip install dist/checkov-*.whl
       - name: Run checkov with Prisma creds
@@ -128,7 +133,9 @@ jobs:
       - name: Test with pytest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run python -m pytest tests
   bump-version:
     needs: [integration-tests, unit-tests, prisma-tests]
