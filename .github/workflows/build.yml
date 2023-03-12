@@ -83,7 +83,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          pipenv run redefine config set stable_branches=main
+          pipenv run redefine config set stable_branches=main matrix_value=${{ matrix.os }}-${{ matrix.python}}
           pipenv run redefine start --pytest --discover
           pipenv run pytest integration_tests
   prisma-tests:
