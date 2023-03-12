@@ -61,6 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          pipenv run redefine config set stable_branches=main
           pipenv run redefine start --pytest --discover
           pipenv run python -m pytest tests
 
@@ -115,6 +116,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          pipenv run redefine config set stable_branches=main
           pipenv run redefine start --pytest --discover
           pipenv run pytest integration_tests -k 'not api_key'
 
@@ -164,7 +166,8 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine config set stable_branches=main
+          pipenv run redefine start --pytest --discover
           pipenv run pytest
         working-directory: ${{ env.working-directory }}
 
@@ -201,6 +204,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine config set stable_branches=main
+          pipenv run redefine start --pytest --discover
           pipenv run pytest
         working-directory: ${{ env.WORKING_DIRECTORY }}

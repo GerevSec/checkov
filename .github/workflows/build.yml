@@ -83,6 +83,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          pipenv run redefine config set stable_branches=main
           pipenv run redefine start --pytest --discover
           pipenv run pytest integration_tests
   prisma-tests:
@@ -139,6 +140,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          pipenv run redefine config set stable_branches=main
           pipenv run redefine start --pytest --discover
           pipenv run python -m pytest tests
   bump-version:
