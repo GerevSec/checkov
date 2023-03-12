@@ -68,11 +68,14 @@ jobs:
         run: |
           pipenv --python ${{ matrix.python }}
           pipenv install --dev -v
+          redefine start --pytest --discover
       - uses: imranismail/setup-kustomize@a76db1c6419124d51470b1e388c4b29476f495f1  # v2
       - name: Unit tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run python -m pytest tests
 
   integration-tests:
@@ -100,6 +103,7 @@ jobs:
         run: |
           pipenv --python ${{ matrix.python }}
           pipenv run pip install pytest pytest-xdist
+          pipenv run pip install redefine --index-url https://redefine.dev/pip/
           pipenv run python setup.py sdist bdist_wheel
           bash -c 'pipenv run pip install dist/checkov-*.whl'
       - name: Clone Terragoat - vulnerable terraform
@@ -118,7 +122,10 @@ jobs:
           # Just making sure the API key tests don't run on PRs
           bash -c './integration_tests/prepare_data.sh ${{ matrix.os }} 3.8'
       - name: Run integration tests
+        env:
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run pytest integration_tests -k 'not api_key'
 
   performance-tests:
@@ -149,6 +156,7 @@ jobs:
           pipenv --python ${{ matrix.python }}
           # 'py' package is used in 'pytest-benchmark', but 'pytest' removed it in their latest version         
           pipenv run pip install pytest pytest-benchmark py
+          pipenv run pip install redefine --index-url https://redefine.dev/pip/
           pipenv run python setup.py sdist bdist_wheel
           bash -c 'pipenv run pip install dist/checkov-*.whl'
       - name: Clone terraform-aws-components
@@ -161,6 +169,9 @@ jobs:
         run: git clone https://github.com/dennyzhang/kubernetes-yaml-templates.git
         working-directory: ${{ env.working-directory }}
       - name: Run performance tests
+        env:
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run pytest
         working-directory: ${{ env.working-directory }}
