@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine start --pytest --discover
           pipenv run python -m pytest tests
 
   integration-tests:
@@ -115,7 +115,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine start --pytest --discover
           pipenv run pytest integration_tests -k 'not api_key'
 
   performance-tests:

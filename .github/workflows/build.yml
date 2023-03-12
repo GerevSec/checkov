@@ -83,7 +83,7 @@ jobs:
         env:
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine start --pytest --discover
           pipenv run pytest integration_tests
   prisma-tests:
     runs-on: [ self-hosted, public, linux, x64 ]
@@ -139,7 +139,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
-          redefine start --pytest --discover
+          pipenv run redefine start --pytest --discover
           pipenv run python -m pytest tests
   bump-version:
     needs: [integration-tests, unit-tests, prisma-tests]
