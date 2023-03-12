@@ -80,7 +80,10 @@ jobs:
           TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       - name: Run integration tests
+        env:
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run pytest integration_tests
   prisma-tests:
     runs-on: [ self-hosted, public, linux, x64 ]
@@ -130,10 +133,13 @@ jobs:
         run: |
           pipenv --python 3.7
           pipenv install --dev
+          pipenv run pip install redefine --index-url https://redefine.dev/pip/
       - name: Test with pytest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REDEFINE_AUTH: ${{ secrets.REDEFINE_AUTH }}
         run: |
+          redefine start --pytest --discover
           pipenv run python -m pytest tests
   bump-version:
     needs: [integration-tests, unit-tests, prisma-tests]
